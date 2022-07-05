@@ -149,6 +149,14 @@ namespace Avalonia.Base.UnitTests
 
             internal override IDisposable RouteBind(
                 AvaloniaObject o,
+                IObservable<object> source,
+                BindingPriority priority)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override IDisposable RouteBind(
+                AvaloniaObject o,
                 IObservable<BindingValue<object>> source,
                 BindingPriority priority)
             {
@@ -170,20 +178,10 @@ namespace Avalonia.Base.UnitTests
                 throw new NotImplementedException();
             }
 
-            internal override void RouteInheritanceParentChanged(AvaloniaObject o, AvaloniaObject oldParent)
-            {
-                throw new NotImplementedException();
-            }
-
             internal override IDisposable RouteSetValue(
                 AvaloniaObject o,
                 object value,
                 BindingPriority priority)
-            {
-                throw new NotImplementedException();
-            }
-
-            internal override ISetterInstance CreateSetterInstance(IStyleable target, object value)
             {
                 throw new NotImplementedException();
             }

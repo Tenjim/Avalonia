@@ -105,5 +105,20 @@ namespace Avalonia
 
             return converted;
         }
+
+        internal override void RoutePropertyChanged(
+            AvaloniaObject owner,
+            object? oldValue,
+            object? newValue,
+            BindingPriority priority,
+            bool isEffectiveValueChange)
+        {
+            owner.RaisePropertyChanged(
+                this,
+                (TValue?)oldValue,
+                (TValue?)newValue,
+                priority,
+                isEffectiveValueChange);
+        }
     }
 }

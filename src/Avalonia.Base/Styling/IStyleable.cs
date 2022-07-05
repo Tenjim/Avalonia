@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Avalonia.Collections;
 using Avalonia.Metadata;
 
@@ -30,26 +29,5 @@ namespace Avalonia.Styling
         /// Gets the effective theme for the control as used by the syling system.
         /// </summary>
         ControlTheme? GetEffectiveTheme();
-
-        /// <summary>
-        /// Notifies the element that a style has been applied.
-        /// </summary>
-        /// <param name="instance">The style instance.</param>
-        void StyleApplied(IStyleInstance instance);
-
-        /// <summary>
-        /// Detaches all styles applied to the element.
-        /// </summary>
-        void DetachStyles();
-
-        /// <summary>
-        /// Detaches a collection of styles, if applied to the element.
-        /// </summary>
-        void DetachStyles(IReadOnlyList<IStyle> styles);
-
-        /// <summary>
-        /// Detaches all styles from the element and queues a restyle.
-        /// </summary>
-        void InvalidateStyles();
     }
 }

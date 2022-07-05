@@ -169,6 +169,13 @@ namespace Avalonia
         /// <inheritdoc/>
         object? IStyledPropertyAccessor.GetDefaultValue(Type type) => GetDefaultBoxedValue(type);
 
+        bool IStyledPropertyAccessor.ValidateValue(object? value)
+        {
+            if (value is TValue typed)
+                return ValidateValue?.Invoke(typed) ?? true;
+            return false;
+        }
+
         /// <inheritdoc/>
         internal override void RouteClearValue(AvaloniaObject o)
         {
@@ -212,6 +219,14 @@ namespace Avalonia
             return null;
         }
 
+        internal override IDisposable RouteBind(
+            AvaloniaObject target,
+            IObservable<object?> source,
+            BindingPriority priority)
+        {
+            return target.Bind<TValue>(this, source, priority);
+        }
+
         /// <inheritdoc/>
         internal override IDisposable RouteBind(
             AvaloniaObject o,
@@ -220,39 +235,6 @@ namespace Avalonia
         {
             var adapter = TypedBindingAdapter<TValue>.Create(o, this, source);
             return o.Bind<TValue>(this, adapter, priority);
-        }
-
-        /// <inheritdoc/>
-        internal override void RouteInheritanceParentChanged(
-            AvaloniaObject o,
-            AvaloniaObject? oldParent)
-        {
-            o.InheritanceParentChanged(this, oldParent);
-        }
-
-        internal override ISetterInstance CreateSetterInstance(IStyleable target, object? value)
-        {
-            if (value is IBinding binding)
-            {
-                return new PropertySetterBindingInstance<TValue>(
-                    target,
-                    this,
-                    binding);
-            }
-            else if (value is ITemplate template && !typeof(ITemplate).IsAssignableFrom(PropertyType))
-            {
-                return new PropertySetterTemplateInstance<TValue>(
-                    target,
-                    this,
-                    template);
-            }
-            else
-            {
-                return new PropertySetterInstance<TValue>(
-                    target,
-                    this,
-                    (TValue)value!);
-            }
         }
 
         private object? GetDefaultBoxedValue(Type type)

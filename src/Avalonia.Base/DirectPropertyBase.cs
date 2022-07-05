@@ -161,6 +161,20 @@ namespace Avalonia
             return null;
         }
 
+        /// <summary>
+        /// Routes an untyped Bind call to a typed call.
+        /// </summary>
+        /// <param name="o">The object instance.</param>
+        /// <param name="source">The binding source.</param>
+        /// <param name="priority">The priority.</param>
+        internal override IDisposable RouteBind(
+            AvaloniaObject o,
+            IObservable<object?> source,
+            BindingPriority priority)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <inheritdoc/>
         internal override IDisposable RouteBind(
             AvaloniaObject o,
@@ -169,36 +183,6 @@ namespace Avalonia
         {
             var adapter = TypedBindingAdapter<TValue>.Create(o, this, source);
             return o.Bind<TValue>(this, adapter);
-        }
-
-        internal override void RouteInheritanceParentChanged(AvaloniaObject o, AvaloniaObject? oldParent)
-        {
-            throw new NotSupportedException("Direct properties do not support inheritance.");
-        }
-
-        internal override ISetterInstance CreateSetterInstance(IStyleable target, object? value)
-        {
-            if (value is IBinding binding)
-            {
-                return new PropertySetterBindingInstance<TValue>(
-                    target,
-                    this,
-                    binding);
-            }
-            else if (value is ITemplate template && !typeof(ITemplate).IsAssignableFrom(PropertyType))
-            {
-                return new PropertySetterTemplateInstance<TValue>(
-                    target,
-                    this,
-                    template);
-            }
-            else
-            {
-                return new PropertySetterInstance<TValue>(
-                    target,
-                    this,
-                    (TValue)value!);
-            }
         }
     }
 }

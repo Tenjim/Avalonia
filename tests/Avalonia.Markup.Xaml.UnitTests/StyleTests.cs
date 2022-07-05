@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Reactive.Linq;
 using Avalonia.Controls;
@@ -27,34 +28,35 @@ namespace Avalonia.Markup.Xaml.UnitTests
         [Fact]
         public void Setter_With_TwoWay_Binding_Should_Update_Source()
         {
-            using (UnitTestApplication.Start(TestServices.MockThreadingInterface))
-            {
-                var data = new Data
-                {
-                    Foo = "foo",
-                };
+            throw new NotImplementedException();
+            //using (UnitTestApplication.Start(TestServices.MockThreadingInterface))
+            //{
+            //    var data = new Data
+            //    {
+            //        Foo = "foo",
+            //    };
 
-                var control = new TextBox
-                {
-                    DataContext = data,
-                };
+            //    var control = new TextBox
+            //    {
+            //        DataContext = data,
+            //    };
 
-                var setter = new Setter
-                {
-                    Property = TextBox.TextProperty,
-                    Value = new Binding
-                    {
-                        Path = "Foo",
-                        Mode = BindingMode.TwoWay
-                    }
-                };
+            //    var setter = new Setter
+            //    {
+            //        Property = TextBox.TextProperty,
+            //        Value = new Binding
+            //        {
+            //            Path = "Foo",
+            //            Mode = BindingMode.TwoWay
+            //        }
+            //    };
 
-                setter.Instance(control).Start(false);
-                Assert.Equal("foo", control.Text);
+            //    setter.Instance(control).Start(false);
+            //    Assert.Equal("foo", control.Text);
 
-                control.Text = "bar";
-                Assert.Equal("bar", data.Foo);
-            }
+            //    control.Text = "bar";
+            //    Assert.Equal("bar", data.Foo);
+            //}
         }
 
         private class Data

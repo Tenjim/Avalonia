@@ -496,11 +496,26 @@ namespace Avalonia
         /// <param name="priority">The priority.</param>
         internal abstract IDisposable RouteBind(
             AvaloniaObject o,
+            IObservable<object?> source,
+            BindingPriority priority);
+
+        /// <summary>
+        /// Routes an untyped Bind call to a typed call.
+        /// </summary>
+        /// <param name="o">The object instance.</param>
+        /// <param name="source">The binding source.</param>
+        /// <param name="priority">The priority.</param>
+        internal abstract IDisposable RouteBind(
+            AvaloniaObject o,
             IObservable<BindingValue<object?>> source,
             BindingPriority priority);
 
-        internal abstract void RouteInheritanceParentChanged(AvaloniaObject o, AvaloniaObject? oldParent);
-        internal abstract ISetterInstance CreateSetterInstance(IStyleable target, object? value);
+        internal abstract void RoutePropertyChanged(
+            AvaloniaObject target,
+            object? oldValue,
+            object? newValue,
+            BindingPriority priority,
+            bool isEffectiveValueChange);
 
         /// <summary>
         /// Overrides the metadata for the property on the specified type.

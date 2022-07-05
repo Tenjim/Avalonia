@@ -415,23 +415,24 @@ namespace Avalonia.Base.UnitTests.Animation
         [Fact]
         public void Transitions_Can_Re_Set_During_Batch_Update()
         {
-            var target = CreateTarget();
-            var control = CreateControl(target.Object);
+            throw new NotImplementedException();
+            ////var target = CreateTarget();
+            ////var control = CreateControl(target.Object);
 
-            // Assigning and then clearing Transitions ensures we have a transition state
-            // collection created.
-            control.Transitions = null;
+            ////// Assigning and then clearing Transitions ensures we have a transition state
+            ////// collection created.
+            ////control.Transitions = null;
 
-            control.BeginBatchUpdate();
+            ////control.BeginBatchUpdate();
 
-            // Setting opacity then Transitions means that we receive the Transitions change
-            // after the Opacity change when EndBatchUpdate is called.
-            control.Opacity = 0.5;
-            control.Transitions = new Transitions { target.Object };
+            ////// Setting opacity then Transitions means that we receive the Transitions change
+            ////// after the Opacity change when EndBatchUpdate is called.
+            ////control.Opacity = 0.5;
+            ////control.Transitions = new Transitions { target.Object };
 
-            // Which means that the transition state hasn't been initialized with the new
-            // Transitions when the Opacity change notification gets raised here.
-            control.EndBatchUpdate();
+            ////// Which means that the transition state hasn't been initialized with the new
+            ////// Transitions when the Opacity change notification gets raised here.
+            ////control.EndBatchUpdate();
         }
 
         private static IDisposable Start()

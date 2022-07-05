@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Styling;
@@ -50,14 +51,15 @@ namespace Avalonia.Benchmarks.Styling
         [Benchmark]
         public void Apply_Simple_Styles()
         {
-            var target = new TestClass();
+            throw new NotImplementedException();
+            //var target = new TestClass();
 
-            target.BeginBatchUpdate();
+            //target.BeginBatchUpdate();
 
-            foreach (var style in _styles)
-                style.TryAttach(target, null);
+            //foreach (var style in _styles)
+            //    style.TryAttach(target, null);
 
-            target.EndBatchUpdate();
+            //target.EndBatchUpdate();
         }
 
         private class TestClass : Control
