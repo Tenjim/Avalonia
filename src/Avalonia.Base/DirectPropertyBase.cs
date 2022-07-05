@@ -172,7 +172,9 @@ namespace Avalonia
             IObservable<object?> source,
             BindingPriority priority)
         {
-            throw new NotImplementedException();
+            // TODO: this requires a double adapter, we should make AvaloniaObject
+            // accept an `IObservable<object?>` for direct properties directly.
+            return RouteBind(o, source.ToBindingValue(), priority);
         }
 
         /// <inheritdoc/>
