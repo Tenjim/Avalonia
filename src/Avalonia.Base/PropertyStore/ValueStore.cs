@@ -60,19 +60,7 @@ namespace Avalonia.PropertyStore
                 var effectiveValue = GetEffectiveValue(property);
                 var entry = new BindingEntry<T>(property, source, priority);
                 InsertFrame(entry);
-
-                if (priority <= effectiveValue.Priority)
-                {
-                    var oldValue = effectiveValue.Entry is object ?
-                        effectiveValue.GetValue<T>() :
-                        property.GetDefaultValue(Owner.GetType());
-                    ReevaluateEffectiveValue<T>(property, oldValue);
-                }
-                else if (effectiveValue.Priority <= BindingPriority.Animation)
-                {
-                    ReevaluateNonAnimatedValue(property, entry);
-                }
-
+                ReevaluateEffectiveValue(property, priority, effectiveValue, entry);
                 return entry;
             }
         }
@@ -99,19 +87,7 @@ namespace Avalonia.PropertyStore
                 var effectiveValue = GetEffectiveValue(property);
                 var entry = new BindingEntry<T>(property, source, priority);
                 InsertFrame(entry);
-
-                if (priority <= effectiveValue.Priority)
-                {
-                    var oldValue = effectiveValue.Entry is object ?
-                        effectiveValue.GetValue<T>() :
-                        property.GetDefaultValue(Owner.GetType());
-                    ReevaluateEffectiveValue<T>(property, oldValue);
-                }
-                else if (effectiveValue.Priority <= BindingPriority.Animation)
-                {
-                    ReevaluateNonAnimatedValue(property, entry);
-                }
-
+                ReevaluateEffectiveValue(property, priority, effectiveValue, entry);
                 return entry;
             }
         }
@@ -138,19 +114,7 @@ namespace Avalonia.PropertyStore
                 var effectiveValue = GetEffectiveValue(property);
                 var entry = new BindingEntry(property, source, priority);
                 InsertFrame(entry);
-
-                if (priority <= effectiveValue.Priority)
-                {
-                    var oldValue = effectiveValue.Entry is object ?
-                        effectiveValue.GetValue() :
-                        GetDefaultValue(property);
-                    ReevaluateEffectiveValue(property, oldValue);
-                }
-                else if (effectiveValue.Priority <= BindingPriority.Animation)
-                {
-                    ReevaluateNonAnimatedValue(property, entry);
-                }
-
+                ReevaluateEffectiveValue(property, priority, effectiveValue, entry);
                 return entry;
             }
         }
@@ -160,20 +124,28 @@ namespace Avalonia.PropertyStore
             _localValues?.ClearValue(property);
         }
 
-        public void SetLocalValue<T>(StyledPropertyBase<T> property, T value)
+        public IDisposable? SetValue<T>(StyledPropertyBase<T> property, T value, BindingPriority priority)
         {
             if (property.ValidateValue?.Invoke(value) == false)
             {
                 throw new ArgumentException($"{value} is not a valid value for '{property.Name}.");
             }
 
-            if (_localValues is null)
+            if (priority == BindingPriority.LocalValue)
             {
-                _localValues = new LocalValueFrame(this);
-                InsertFrame(_localValues);
+                if (_localValues is null)
+                    InsertFrame(_localValues = new LocalValueFrame(this));
+                _localValues.SetValue(property, value);
+                return null;
             }
-
-            _localValues.SetValue(property, value);
+            else
+            {
+                var effectiveValue = GetEffectiveValue(property);
+                var frame = new SingleValueFrame<T>(property, value, priority);
+                InsertFrame(frame);
+                ReevaluateEffectiveValue(property, priority, effectiveValue, frame);
+                return frame;
+            }
         }
 
         public object? GetValue(AvaloniaProperty property)
@@ -420,6 +392,25 @@ namespace Avalonia.PropertyStore
                 ClearEffectiveValue(property);
 
             RaisePropertyChanged(property, value, oldValue, newValue, priority, true);
+        }
+
+        private void ReevaluateEffectiveValue<T>(
+            StyledPropertyBase<T> property,
+            BindingPriority priority,
+            in EffectiveValue previousValue,
+            IValueEntry newValue)
+        {
+            if (priority <= previousValue.Priority)
+            {
+                var oldValue = previousValue.Entry is object ?
+                    previousValue.GetValue() :
+                    GetDefaultValue(property);
+                ReevaluateEffectiveValue(property, oldValue);
+            }
+            else if (previousValue.Priority <= BindingPriority.Animation)
+            {
+                ReevaluateNonAnimatedValue(property, newValue);
+            }
         }
 
         private void ReevaluateEffectiveValue<T>(StyledPropertyBase<T> property, in Optional<T> oldValue)

@@ -2,6 +2,7 @@ using System;
 using Avalonia.Data;
 using Avalonia.Reactive;
 using Avalonia.Styling;
+using Avalonia.Utilities;
 
 namespace Avalonia
 {
@@ -197,26 +198,28 @@ namespace Avalonia
 
         /// <inheritdoc/>
         internal override IDisposable? RouteSetValue(
-            AvaloniaObject o,
+            AvaloniaObject target,
             object? value,
             BindingPriority priority)
         {
-            var v = TryConvert(value);
-
-            if (v.HasValue)
+            if (value == BindingOperations.DoNothing)
             {
-                return o.SetValue<TValue>(this, (TValue)v.Value!, priority);
+                return null;
             }
-            else if (v.Type == BindingValueType.UnsetValue)
+            else if (value == UnsetValue)
             {
-                o.ClearValue(this);
+                target.ClearValue(this);
+                return null;
             }
-            else if (v.HasError)
+            else if (TypeUtilities.TryConvertImplicit(PropertyType, value, out var converted))
             {
-                throw v.Error!;
+                return target.SetValue<TValue>(this, (TValue)converted!);
             }
-
-            return null;
+            else
+            {
+                var type = value?.GetType().FullName ?? "(null)";
+                throw new ArgumentException($"Invalid value for Property '{Name}': '{value}' ({type})");
+            }
         }
 
         internal override IDisposable RouteBind(

@@ -5,7 +5,6 @@ using Avalonia.Data;
 using Avalonia.Diagnostics;
 using Avalonia.Logging;
 using Avalonia.PropertyStore;
-using Avalonia.Reactive;
 using Avalonia.Threading;
 
 namespace Avalonia
@@ -328,18 +327,17 @@ namespace Avalonia
 
             LogPropertySet(property, value, BindingPriority.LocalValue);
 
-            if (priority == BindingPriority.LocalValue)
+            if (value is UnsetValueType)
             {
-                if (value is UnsetValueType)
+                if (priority == BindingPriority.LocalValue)
                     _values.ClearLocalValue(property);
-                else if (!(value is DoNothingType))
-                    _values.SetLocalValue(property, value);
-                return null;
             }
-            else
+            else if (value is not DoNothingType)
             {
-                throw new NotImplementedException();
+                return _values.SetValue(property, value, priority);
             }
+
+            return null;
         }
 
         /// <summary>
