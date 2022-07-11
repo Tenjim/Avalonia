@@ -213,7 +213,7 @@ namespace Avalonia
             }
             else if (TypeUtilities.TryConvertImplicit(PropertyType, value, out var converted))
             {
-                return target.SetValue<TValue>(this, (TValue)converted!);
+                return target.SetValue<TValue>(this, (TValue)converted!, priority);
             }
             else
             {
