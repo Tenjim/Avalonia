@@ -16,7 +16,7 @@
         /// <exception cref="AvaloniaInternalException">
         /// The entry has no value.
         /// </exception>
-        T GetValue();
+        new T GetValue();
 
         /// <summary>
         /// Tries to get the value associated with the entry.

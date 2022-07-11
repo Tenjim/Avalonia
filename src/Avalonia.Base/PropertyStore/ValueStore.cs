@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Avalonia.Collections.Pooled;
 using Avalonia.Data;
 using Avalonia.Diagnostics;
@@ -196,12 +197,8 @@ namespace Avalonia.PropertyStore
                 {
                     var value = values[j];
 
-                    if (value.Property == property &&
-                        value is IValueEntry<T> typed &&
-                        typed.TryGetValue(out var result))
-                    {
-                        return result!;
-                    }
+                    if (value.Property == property)
+                        return GetValue<T>(value);
                 }
             }
 
@@ -664,10 +661,7 @@ namespace Avalonia.PropertyStore
             if (priority > BindingPriority.Animation)
                 _nonAnimatedValues?.Remove(property.Id);
 
-            if (value is IValueEntry<T> typed)
-                return typed.GetValue();
-            else
-                return (T)value.GetValue()!;
+            return GetValue<T>(value);
         }
 
         private void ClearEffectiveValue(AvaloniaProperty property)
@@ -781,6 +775,12 @@ namespace Avalonia.PropertyStore
                 Owner.RaisePropertyChanged(property, oldValue, newValue, priority, isEffectiveValueChange);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static T GetValue<T>(IValueEntry value)
+        {
+            return value is IValueEntry<T> typed ? typed.GetValue() : (T)value.GetValue()!;
+        }
+
         private readonly struct EffectiveValue
         {
             public EffectiveValue(IValueEntry? value, BindingPriority priority)
@@ -793,14 +793,7 @@ namespace Avalonia.PropertyStore
             public readonly BindingPriority Priority;
 
             public object? GetValue() => Entry!.GetValue();
-
-            public T GetValue<T>()
-            {
-                if (Entry is IValueEntry<T> typed)
-                    return typed.GetValue();
-                else
-                    return (T)Entry!.GetValue()!;
-            }
+            public T GetValue<T>() => ValueStore.GetValue<T>(Entry!);
         }
 
         private class FrameInsertionComparer : IComparer<IValueFrame>

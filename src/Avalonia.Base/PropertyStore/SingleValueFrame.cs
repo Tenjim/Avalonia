@@ -4,9 +4,9 @@ using Avalonia.Data;
 
 namespace Avalonia.PropertyStore
 {
-    internal class SingleValueFrame<T> : List<IValueEntry>, 
+    internal class SingleValueFrame<T> : List<IValueEntry>,
+        IValueEntry<T>,
         IValueFrame,
-        IValueEntry,
         IDisposable
     {
         private readonly T _value;
@@ -26,10 +26,9 @@ namespace Avalonia.PropertyStore
         public bool HasValue => true;
         public bool IsActive => true;
         public BindingPriority Priority { get; }
-        public AvaloniaProperty Property { get; }
+        public StyledPropertyBase<T> Property { get; }
         public IList<IValueEntry> Values => this;
-
-        public object? GetValue() => _value;
+        AvaloniaProperty IValueEntry.Property => Property;
 
         public void Dispose()
         {
@@ -37,12 +36,22 @@ namespace Avalonia.PropertyStore
             _owner = null;
         }
 
+        public T GetValue() => _value;
+
         public void SetOwner(ValueStore? owner) => _owner = owner;
 
-        public bool TryGetValue(out object? value)
+        public bool TryGetValue(out T? value)
         {
             value = _value;
             return true;
         }
+
+        bool IValueEntry.TryGetValue(out object? value)
+        {
+            value = _value;
+            return true;
+        }
+
+        object? IValueEntry.GetValue() => _value;
     }
 }

@@ -94,6 +94,16 @@ namespace Avalonia.Base.UnitTests
         }
 
         [Fact]
+        public void GetBaseValue_LocalValue_Returns_Style_Value_Set_Via_Untyped_Setters()
+        {
+            var target = new Class3();
+
+            target.SetValue(Class1.FooProperty, (object)"style", BindingPriority.Style);
+            target.SetValue(Class1.FooProperty, (object)"animated", BindingPriority.Animation);
+            Assert.Equal("style", target.GetBaseValue(Class1.FooProperty, BindingPriority.LocalValue).Value);
+        }
+
+        [Fact]
         public void GetBaseValue_Style_Ignores_LocalValue_Animated_Value()
         {
             var target = new Class3();
