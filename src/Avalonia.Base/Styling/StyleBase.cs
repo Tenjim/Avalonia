@@ -83,6 +83,9 @@ namespace Avalonia.Styling
 
         internal IValueFrame Attach(IStyleable target, IStyleActivator? activator)
         {
+            if (target is not AvaloniaObject ao)
+                throw new InvalidOperationException("Styles can only be applied to AvaloniaObjects.");
+
             var instance = new StyleInstance(this, activator);
 
             if (_setters is object)
@@ -94,6 +97,7 @@ namespace Avalonia.Styling
                 }
             }
 
+            ao.GetValueStore().AddFrame(instance);
             return instance;
         }
 
