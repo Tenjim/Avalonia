@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Avalonia.Data;
 
 namespace Avalonia.PropertyStore
@@ -37,6 +38,18 @@ namespace Avalonia.PropertyStore
         public T GetValue() => _value;
 
         public void SetOwner(ValueStore? owner) => _owner = owner;
+
+        public bool TryGetEntry(AvaloniaProperty property, [NotNullWhen(true)] out IValueEntry? entry)
+        {
+            if (property == Property)
+            {
+                entry = this;
+                return true;
+            }
+
+            entry = null;
+            return false;
+        }
 
         public bool TryGetValue(out T? value)
         {

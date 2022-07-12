@@ -21,6 +21,11 @@ namespace Avalonia.PropertyStore
             return _values.TryGetValue(property, out value);
         }
 
+        public bool TryGetEntry(AvaloniaProperty property, [NotNullWhen(true)] out IValueEntry? entry)
+        {
+            return _values.TryGetValue(property, out entry);
+        }
+
         protected void Add(IValueEntry value)
         {
             Debug.Assert(!value.Property.IsDirect);

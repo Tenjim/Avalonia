@@ -191,15 +191,8 @@ namespace Avalonia.PropertyStore
                 if (frame.Priority < maxPriority || frame.Priority > minPriority)
                     continue;
 
-                var count = frame.EntryCount;
-
-                for (var j = 0; j < count; ++j)
-                {
-                    var value = frame.GetEntry(j);
-
-                    if (value.Property == property)
-                        return GetValue<T>(value);
-                }
+                if (frame.TryGetEntry(property, out var value))
+                    return GetValue<T>(value);
             }
 
             return default;
@@ -484,18 +477,11 @@ namespace Avalonia.PropertyStore
                 if (!frame.IsActive || frame.Priority < maxPriority)
                     continue;
 
-                var count = frame.EntryCount;
-
-                for (var j = 0; j < count; ++j)
+                if (frame.TryGetEntry(property, out var value) && value.HasValue)
                 {
-                    var value = frame.GetEntry(j);
-
-                    if (value.Property == property && value.HasValue)
-                    {
-                        priority = frame.Priority;
-                        result = value;
-                        return true;
-                    }
+                    priority = frame.Priority;
+                    result = value;
+                    return true;
                 }
             }
 
@@ -508,18 +494,11 @@ namespace Avalonia.PropertyStore
 
                 while (frame is not null)
                 {
-                    var count = frame.EntryCount;
-
-                    for (var j = 0; j < count; ++j)
+                    if (frame.TryGetEntry(property, out var value) && value.HasValue)
                     {
-                        var value = frame.GetEntry(j);
-
-                        if (value.Property == property && value.HasValue)
-                        {
-                            priority = frame.Priority;
-                            result = value;
-                            return true;
-                        }
+                        priority = frame.Priority;
+                        result = value;
+                        return true;
                     }
 
                     frame = frame.Parent;

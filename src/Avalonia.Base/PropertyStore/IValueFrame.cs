@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Avalonia.Data;
 
 namespace Avalonia.PropertyStore
@@ -41,5 +42,10 @@ namespace Avalonia.PropertyStore
         /// </summary>
         /// <param name="owner">The new owner.</param>
         void SetOwner(ValueStore? owner);
+
+        /// <summary>
+        /// Tries to retreive the frame's value entry for the specified property.
+        /// </summary>
+        bool TryGetEntry(AvaloniaProperty property, [NotNullWhen(true)] out IValueEntry? entry);
     }
 }

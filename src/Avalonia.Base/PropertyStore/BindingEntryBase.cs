@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Disposables;
 using Avalonia.Data;
 using Avalonia.Logging;
@@ -45,6 +46,18 @@ namespace Avalonia.PropertyStore
             if (!HasValue)
                 throw new AvaloniaInternalException("The BindingEntry has no value.");
             return _value!;
+        }
+
+        public bool TryGetEntry(AvaloniaProperty property, [NotNullWhen(true)] out IValueEntry? entry)
+        {
+            if (property == Property)
+            {
+                entry = this;
+                return true;
+            }
+
+            entry = null;
+            return false;
         }
 
         public bool TryGetValue(out object? value)
