@@ -129,7 +129,12 @@ namespace Avalonia.Utilities
 
         public void SetValue(AvaloniaProperty property, TValue value)
         {
-            _entries[TryFindEntry(property.Id).Item1].Value = value;
+            var (index, found) = TryFindEntry(property.Id);
+
+            if (found)
+                _entries[index].Value = value;
+            else
+                AddValue(property, value);
         }
 
         public void Remove(AvaloniaProperty property)

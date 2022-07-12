@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Avalonia.Data;
 
 namespace Avalonia.PropertyStore
 {
-    internal class SingleValueFrame<T> : List<IValueEntry>,
-        IValueEntry<T>,
+    internal class SingleValueFrame<T> : IValueEntry<T>,
         IValueFrame,
         IDisposable
     {
@@ -20,14 +18,13 @@ namespace Avalonia.PropertyStore
             Property = property;
             Priority = priority;
             _value = value;
-            Add(this);
         }
 
         public bool HasValue => true;
         public bool IsActive => true;
         public BindingPriority Priority { get; }
         public StyledPropertyBase<T> Property { get; }
-        public IList<IValueEntry> Values => this;
+        public int EntryCount => 1;
         AvaloniaProperty IValueEntry.Property => Property;
 
         public void Dispose()
@@ -36,6 +33,7 @@ namespace Avalonia.PropertyStore
             _owner = null;
         }
 
+        public IValueEntry GetEntry(int index) => this;
         public T GetValue() => _value;
 
         public void SetOwner(ValueStore? owner) => _owner = owner;

@@ -191,11 +191,11 @@ namespace Avalonia.PropertyStore
                 if (frame.Priority < maxPriority || frame.Priority > minPriority)
                     continue;
 
-                var values = frame.Values;
+                var count = frame.EntryCount;
 
-                for (var j = 0; j < values.Count; ++j)
+                for (var j = 0; j < count; ++j)
                 {
-                    var value = values[j];
+                    var value = frame.GetEntry(j);
 
                     if (value.Property == property)
                         return GetValue<T>(value);
@@ -484,11 +484,11 @@ namespace Avalonia.PropertyStore
                 if (!frame.IsActive || frame.Priority < maxPriority)
                     continue;
 
-                var values = frame.Values;
+                var count = frame.EntryCount;
 
-                for (var j = 0; j < values.Count; ++j)
+                for (var j = 0; j < count; ++j)
                 {
-                    var value = values[j];
+                    var value = frame.GetEntry(j);
 
                     if (value.Property == property && value.HasValue)
                     {
@@ -506,13 +506,13 @@ namespace Avalonia.PropertyStore
                 if (frame?.Owner == this)
                     frame = frame.Parent;
 
-                while (frame is object)
+                while (frame is not null)
                 {
-                    var values = frame.Values;
+                    var count = frame.EntryCount;
 
-                    for (var j = 0; j < values.Count; ++j)
+                    for (var j = 0; j < count; ++j)
                     {
-                        var value = values[j];
+                        var value = frame.GetEntry(j);
 
                         if (value.Property == property && value.HasValue)
                         {
@@ -540,11 +540,11 @@ namespace Avalonia.PropertyStore
                 if (!frame.IsActive)
                     return;
 
-                var values = frame.Values;
+                var count = frame.EntryCount;
 
-                for (var j = 0; j < values.Count; ++j)
+                for (var j = 0; j < count; ++j)
                 {
-                    var entry = values[j];
+                    var entry = frame.GetEntry(j);
                     var property = entry.Property;
 
                     if (foundValues.TryGetValue(property.Id, out var found) && found == FoundValue.NonAnimated)

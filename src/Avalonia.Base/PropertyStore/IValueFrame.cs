@@ -27,9 +27,14 @@ namespace Avalonia.PropertyStore
         BindingPriority Priority { get; }
 
         /// <summary>
-        /// Gets the frame's value entries.
+        /// Gets the number of value entries in the frame.
         /// </summary>
-        IList<IValueEntry> Values { get; }
+        int EntryCount { get; }
+
+        /// <summary>
+        /// Retreives the frame's value entry with the specified index.
+        /// </summary>
+        IValueEntry GetEntry(int index);
 
         /// <summary>
         /// Sets the owner of the value frame.
