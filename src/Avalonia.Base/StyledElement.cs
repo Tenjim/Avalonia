@@ -529,6 +529,7 @@ namespace Avalonia
             return null;
         }
 
+        void IStyleable.DetachStyles() => DetachStyles();
 
         void IStyleHost.StylesAdded(IReadOnlyList<IStyle> styles)
         {

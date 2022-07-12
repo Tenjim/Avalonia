@@ -51,15 +51,14 @@ namespace Avalonia.Benchmarks.Styling
         [Benchmark]
         public void Apply_Simple_Styles()
         {
-            throw new NotImplementedException();
-            //var target = new TestClass();
+            var target = new TestClass();
 
-            //target.BeginBatchUpdate();
+            target.GetValueStore().BeginStyling();
 
-            //foreach (var style in _styles)
-            //    style.TryAttach(target, null);
+            foreach (var style in _styles)
+                style.TryAttach(target, null);
 
-            //target.EndBatchUpdate();
+            target.GetValueStore().EndStyling();
         }
 
         private class TestClass : Control

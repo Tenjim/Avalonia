@@ -29,5 +29,7 @@ namespace Avalonia.Styling
         /// Gets the effective theme for the control as used by the syling system.
         /// </summary>
         ControlTheme? GetEffectiveTheme();
+
+        void DetachStyles();
     }
 }

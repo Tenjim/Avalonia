@@ -33,11 +33,10 @@ namespace Avalonia.Benchmarks.Styling
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void AttachTextBoxStyles()
         {
-            throw new NotImplementedException();
-            //var styles = UnitTestApplication.Current.Styles;
+            var styles = UnitTestApplication.Current.Styles;
 
-            //styles.TryAttach(_control, UnitTestApplication.Current);
-            //((IStyleable)_control).DetachStyles();
+            styles.TryAttach(_control, UnitTestApplication.Current);
+            ((IStyleable)_control).DetachStyles();
         }
 
         public void Dispose()
