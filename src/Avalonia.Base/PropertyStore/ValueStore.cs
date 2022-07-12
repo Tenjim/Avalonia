@@ -10,12 +10,13 @@ namespace Avalonia.PropertyStore
 {
     internal class ValueStore
     {
-        private int _styling;
         private readonly List<IValueFrame> _frames = new();
         private InheritanceFrame? _inheritanceFrame;
         private LocalValueFrame? _localValues;
         private Dictionary<int, EffectiveValue>? _effectiveValues;
         private Dictionary<int, EffectiveValue>? _nonAnimatedValues;
+        private int _frameGeneration;
+        private int _styling;
 
         public ValueStore(AvaloniaObject owner) => Owner = owner;
 
@@ -294,12 +295,14 @@ namespace Avalonia.PropertyStore
         public void RemoveBindingEntry<T>(BindingEntry<T> entry, in Optional<T> oldValue)
         {
             _frames.Remove(entry);
+            ++_frameGeneration;
             ReevaluateEffectiveValue(entry.Property, oldValue);
         }
 
         public void RemoveBindingEntry(BindingEntry entry, object? oldValue)
         {
             _frames.Remove(entry);
+            ++_frameGeneration;
             ReevaluateEffectiveValue(entry.Property, oldValue);
         }
 
@@ -309,12 +312,14 @@ namespace Avalonia.PropertyStore
             if (index < 0)
                 index = ~index;
             _frames.Insert(index, frame);
+            ++_frameGeneration;
             frame.SetOwner(this);
         }
 
         public void RemoveFrame(IValueFrame frame)
         {
             _frames.Remove(frame);
+            ++_frameGeneration;
             if (_styling == 0)
                 ReevaluateEffectiveValues();
         }
@@ -513,6 +518,8 @@ namespace Avalonia.PropertyStore
         private void ReevaluateEffectiveValues()
         {
             var foundValues = DictionaryPool<int, FoundValue>.Get();
+        restart:
+            var generation = _frameGeneration;
 
             void ReevaluateFrame(IValueFrame frame)
             {
@@ -566,6 +573,8 @@ namespace Avalonia.PropertyStore
             for (var i = frames.Count - 1; i >= 0; --i)
             {
                 ReevaluateFrame(frames[i]);
+                if (_frameGeneration != generation)
+                    goto restart;
             }
 
             var inheritanceFrame = _inheritanceFrame;
@@ -611,6 +620,7 @@ namespace Avalonia.PropertyStore
             }
 
             removedValues.Dispose();
+            DictionaryPool<int, FoundValue>.Release(foundValues);
         }
 
         private EffectiveValue GetEffectiveValue(AvaloniaProperty property)
