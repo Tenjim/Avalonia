@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Avalonia.Data;
 using Avalonia.Reactive;
 using Avalonia.Styling;
@@ -172,6 +173,8 @@ namespace Avalonia
 
         bool IStyledPropertyAccessor.ValidateValue(object? value)
         {
+            if (value is null && !typeof(TValue).IsValueType)
+                return ValidateValue?.Invoke(default!) ?? true;
             if (value is TValue typed)
                 return ValidateValue?.Invoke(typed) ?? true;
             return false;
