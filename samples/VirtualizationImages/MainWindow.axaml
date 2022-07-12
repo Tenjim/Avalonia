@@ -1,0 +1,96 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:virtualizationImages="clr-namespace:VirtualizationImages"
+        x:Class="VirtualizationImages.MainWindow"
+        Title="AvaloniaUI Virtualization Image Test"
+        Width="800"
+        Height="700">
+    <DockPanel LastChildFill="True" Margin="16">
+        <StackPanel DockPanel.Dock="Right"
+                    Margin="16 0 0 0"
+                    MinWidth="150"
+                    Spacing="4">
+            <ComboBox Items="{Binding VirtualizationModes}"
+                      SelectedItem="{Binding VirtualizationMode}"/>
+            <ComboBox Items="{Binding Orientations}"
+                      SelectedItem="{Binding Orientation}"/>
+            <TextBlock Text="AutoScrollToSelectedItem"></TextBlock><CheckBox IsChecked="{Binding AutoScroll}"></CheckBox>
+            <TextBox Watermark="Item Count"
+                     UseFloatingWatermark="True"
+                     Text="{Binding ItemCount}"/>
+            <TextBox Watermark="Zoom"
+                     UseFloatingWatermark="True"
+                     Text="{Binding Zoom}"/>
+            <TextBox Watermark="Selected item"
+                     UseFloatingWatermark="True"
+                     Text="{Binding Selection.SelectedIndex}"/>
+            <TextBox Watermark="Extent"
+                     UseFloatingWatermark="True"
+                     Text="{Binding #listBox.Scroll.Extent, Mode=OneWay}"/>
+            <TextBox Watermark="Offset"
+                     UseFloatingWatermark="True"
+                     Text="{Binding #listBox.Scroll.Offset, Mode=OneWay}"/>
+            <TextBox Watermark="Viewport"
+                     UseFloatingWatermark="True"
+                     Text="{Binding #listBox.Scroll.Viewport, Mode=OneWay}"/>
+            <TextBlock>Horiz. ScrollBar</TextBlock>
+            <ComboBox Items="{Binding ScrollBarVisibilities}"
+                      SelectedItem="{Binding HorizontalScrollBarVisibility}"/>
+            <TextBlock>Vert. ScrollBar</TextBlock>
+            <ComboBox Items="{Binding ScrollBarVisibilities}"
+                      SelectedItem="{Binding VerticalScrollBarVisibility}"/>
+            <TextBox Watermark="Item to Create"
+                     UseFloatingWatermark="True"
+                     Text="{Binding NewItemString}"/>
+            <Button Command="{Binding AddItemCommand}">Add Item</Button>
+            <Button Command="{Binding RemoveItemCommand}">Remove Item</Button>
+            <Button Command="{Binding RecreateCommand}">Recreate</Button>
+            <Button Command="{Binding SelectFirstCommand}">Select First</Button>
+            <Button Command="{Binding SelectLastCommand}">Select Last</Button>
+        </StackPanel>
+
+        <ListBox x:Name="listBox"
+                 Items="{Binding Items}"
+                 Selection="{Binding Selection}"
+                 SelectionMode="Multiple"
+                 VirtualizationMode="{Binding VirtualizationMode}"
+                 ScrollViewer.HorizontalScrollBarVisibility="{Binding HorizontalScrollBarVisibility, Mode=TwoWay}"
+                 ScrollViewer.VerticalScrollBarVisibility="{Binding VerticalScrollBarVisibility, Mode=TwoWay}"
+                 AutoScrollToSelectedItem="{Binding AutoScroll}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="{Binding Orientation}"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Header}" TextWrapping="Wrap" />
+                    
+                    <LayoutTransformControl HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" x:Name="ctlScrollingLayoutTransform" >
+                        <LayoutTransformControl.LayoutTransform>
+                            <MatrixTransform Matrix="{Binding $parent[Window].DataContext.Zoom, Converter={virtualizationImages:DoubleToMatrixConverter}}"></MatrixTransform>
+                        </LayoutTransformControl.LayoutTransform>
+                        <Grid Name="grid"
+                              RenderTransformOrigin="0.5,0.5"
+                        >
+                            
+                           
+                            <Image x:Name="ctlImage"
+                                   IsHitTestVisible="False"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   RenderOptions.BitmapInterpolationMode="HighQuality"
+                                   Source="{Binding DisplayImage, Converter={virtualizationImages:ByteArrayToBitmapConverter}, TargetNullValue={x:Null}}"
+                                   Height="{Binding Height }"
+                                   LayoutUpdated="CtlImage_OnLayoutUpdated"/>
+                            
+                        </Grid>
+                    </LayoutTransformControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>
